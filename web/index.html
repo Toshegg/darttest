@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>BabylonJS Dart Interop Demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <canvas id="renderCanvas"></canvas>
+
+    <select id="positions">
+      <option value="" selected>Initial position</option>
+    </select>
+
+    <input id="positionName" type="text" placeholder="Enter position name"></input>
+
+    <button id="savePosition">Save my position</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babylonjs/2.3.0/babylon.js"></script>
+    <script type="application/dart" src="main.dart"></script>
+    <script src="packages/browser/dart.js"></script>
+  </body>
+</html>

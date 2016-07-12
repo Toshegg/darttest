@@ -1,0 +1,38 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background:#003366;
+  color:#fff;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+  font-family:georgia,serif;
+  text-align:center;
+}
+
+#savePosition {
+  position: absolute;
+  top: 10%;
+  left: 5%;
+}
+
+#positionName {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+}
+
+#positions {
+  width: 130px;
+  position: absolute;
+  top: 5%;
+  right: 5%;
+}

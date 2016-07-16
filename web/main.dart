@@ -3,6 +3,7 @@
 import 'dart:html';
 import 'dart:core';
 import 'dart:collection';
+import 'dart:convert';
 import "package:js/js.dart" show allowInterop;
 import 'package:babylonjs_facade/babylon.dart' as Babylon;
 
@@ -15,6 +16,7 @@ var initialPosition;
 var savePositionButton;
 var positionNameInput;
 var positionsSelect;
+var inputFocused;
 
 HashMap<String, Babylon.Vector3> positions;
 
@@ -23,15 +25,28 @@ main() {
   canvas = document.getElementById("renderCanvas");
   canvas.style.width = "100%";
   canvas.style.height = "100%";
-  engine = engine = new Babylon.Engine(canvas, true);
+  engine = new Babylon.Engine(canvas, true);
 
   savePositionButton = document.getElementById("savePosition");
   positionNameInput = document.getElementById("positionName");
   positionsSelect = document.getElementById("positions");
 
+  positionNameInput.onFocus.listen((e) => inputFocused = true);
+  positionNameInput.onBlur.listen((e) => inputFocused = false);
+
+  Element.keyDownEvent.forTarget(document.body, useCapture: true).listen((e) {
+    if (inputFocused) {
+      e.stopPropagation();
+    }
+  });
+
   positionsSelect.onChange.listen(_positionSelected);
   savePositionButton.onClick.listen(_savePosition);
   positions = new HashMap<String, Babylon.Vector3>();
+
+  if (window.localStorage.length > 0) {
+    restorePositions();
+  }
 
   init();
 }
@@ -82,10 +97,10 @@ void _onSuccess(Babylon.Scene newScene) {
         Babylon.FreeCamera cam = newScene.activeCamera;
         initialPosition = cam.position.clone();
         
-        //cam.keysUp.add(87); // W
-        //cam.keysDown.add(83); // S
-        //cam.keysLeft.add(65); // A
-        //cam.keysRight.add(68); // D
+        cam.keysUp.add(87); // W
+        cam.keysDown.add(83); // S
+        cam.keysLeft.add(65); // A
+        cam.keysRight.add(68); // D
       }
     }
 
@@ -98,14 +113,25 @@ void _onProgress(Object evt) {
 }
 
 void _savePosition(event) {
-  positions[positionNameInput.value] = scene.activeCamera.position.clone();
+  var position = scene.activeCamera.position.clone();
+  var name = positionNameInput.value;
 
+  positions[name] = position;
+
+  addElementToSelect(name);
+
+  if (name != "") {
+    window.localStorage[name] = vectorToString(position);
+  }
+  positionNameInput.value = null;
+}
+
+void addElementToSelect(String value) {
   OptionElement option = new Element.tag("option");
-  option.text = positionNameInput.value;
-  option.value = positionNameInput.value;
+  option.text = value;
+  option.value = value;
   
   positionsSelect.add(option, null);
-  positionNameInput.value = null;
 }
 
 void _positionSelected(event) {
@@ -116,4 +142,16 @@ void _positionSelected(event) {
   }
 }
 void _onError(Babylon.Scene a) {
+}
+
+String vectorToString(Babylon.Vector3 v) {
+  return '{"x": ${v.x}, "y": ${v.y}, "z": ${v.z}}';
+}
+
+void restorePositions() {
+  for (var key in window.localStorage.keys) {
+    var position = JSON.decode(window.localStorage[key]);
+    positions[key] = new Babylon.Vector3(position['x'], position['y'], position['z']);
+    addElementToSelect(key);
+  }
 }

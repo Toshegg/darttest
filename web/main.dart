@@ -95,6 +95,8 @@ void _onSuccess(Babylon.Scene newScene) {
       
       if (newScene.activeCamera is Babylon.FreeCamera ) {
         Babylon.FreeCamera cam = newScene.activeCamera;
+        cam.applyGravity = false;
+        cam.checkCollisions = false;
         initialPosition = cam.position.clone();
         
         cam.keysUp.add(87); // W
